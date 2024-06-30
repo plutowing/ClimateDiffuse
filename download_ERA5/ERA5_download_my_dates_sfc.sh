@@ -39,9 +39,9 @@ for year in $(seq ${year_start} 1 ${year_end}); do
         python preprocessing_subsample.py --year ${year} --month ${month} --last_day ${last_day} --remove_files  
         echo "Done for ${year} ${month}"
     done
-    # echo "Concatenate all months for ${year}"
-    # python preprocessing_concat_year.py --year ${year} --remove_files
-    # echo "Done for  ${year}"
+    echo "Concatenate all months for ${year}"
+    python preprocessing_concat_year.py --year ${year} --remove_files
+    echo "Done for  ${year}"
 done
 echo DONE
 

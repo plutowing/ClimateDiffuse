@@ -1,4 +1,4 @@
-name: ClimateDiffuse
+name: ClimateDiffuse_env
 channels:
   - pytorch
   - nvidia

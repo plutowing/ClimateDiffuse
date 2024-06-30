@@ -1,3 +1,5 @@
+import os
+import json
 import torch
 import Network
 from tqdm import tqdm
@@ -151,22 +153,39 @@ def sample_model(model, dataloader, num_steps=40, sigma_min=0.002,
 
 
 def main():
-    batch_size = 8
+    # Opening config json file
+    cfg_f = open('train_test_cfg.json')
+    cfg = json.load(cfg_f)
+    high_res_shp = tuple(cfg["HIGH_RES_SHP"])
+
+    batch_size = 3
     learning_rate = 1e-4
     num_epochs = 10000
     accum = 8
 
     # Define device
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    network = Network.EDMPrecond((256, 128), 8, 3, label_dim=2)
+    # network = Network.EDMPrecond((256, 128), 8, 3, label_dim=2)
+    # network = Network.EDMPrecond((32, 16), 8, 3, label_dim=2)
+    network = Network.EDMPrecond(high_res_shp, 8, 3, label_dim=2)
     network.to(device)
 
     # define the datasets
-    datadir = "/home/Everyone/ERA5/data/"
-    dataset_train = UpscaleDataset(datadir, year_start=1950, year_end=2017,
+    # datadir = "/home/Everyone/ERA5/data/"
+    # dataset_train = UpscaleDataset(datadir, year_start=1950, year_end=2017,
+    #                                constant_variables=["lsm", "z"])
+
+    # dataset_test = UpscaleDataset(datadir, year_start=2017, year_end=2018,
+    #                               constant_variables=["lsm", "z"])
+
+    # datadir = "/home/pluto/gitlocal/ClimateDiffuse/download_ERA5/data/"
+    datadir = cfg["DATA_PATH"]
+    print("preparing training dataset")
+    dataset_train = UpscaleDataset(datadir, year_start=2020, year_end=2021,
                                    constant_variables=["lsm", "z"])
 
-    dataset_test = UpscaleDataset(datadir, year_start=2017, year_end=2018,
+    print("preparing testing dataset")
+    dataset_test = UpscaleDataset(datadir, year_start=2021, year_end=2022,
                                   constant_variables=["lsm", "z"])
 
     dataloader_train = torch.utils.data.DataLoader(
@@ -180,10 +199,17 @@ def main():
     optimiser = torch.optim.AdamW(network.parameters(), lr=learning_rate)
 
     # Define the tensorboard writer
-    writer = SummaryWriter("./runs")
+    runs_path = cfg["RUNS_PATH"]
+    # writer = SummaryWriter("./runs")
+    writer = SummaryWriter(runs_path)
 
     # define loss function
     loss_fn = EDMLoss()
+
+    results_path = cfg["RESULTS_PATH"]
+    model_path = cfg["Model_PATH"]
+    os.makedirs(results_path, exist_ok=True)
+    os.makedirs(model_path, exist_ok=True)
 
     # train the model
     losses = []
@@ -196,7 +222,8 @@ def main():
         if (step + 0) % 5 == 0:
             (fig, ax), (base_error, pred_error) = sample_model(
                 network, dataloader_test)
-            fig.savefig(f"./results/{step}.png", dpi=300)
+            # fig.savefig(f"./results/{step}.png", dpi=300)
+            fig.savefig(os.path.join(results_path, f"{step}.png"), dpi=300)
             plt.close(fig)
 
             writer.add_scalar("Error/base", base_error, step)
@@ -204,9 +231,10 @@ def main():
 
         # save the model
         if losses[-1] == min(losses):
-            torch.save(network.state_dict(), f"./Model/{step}.pt")
+            # torch.save(network.state_dict(), f"./Model/{step}.pt")
+            model_file_outpath = os.path.join(model_path, f"{step}.pt")
+            torch.save(network.state_dict(), model_file_outpath)
 
 
 if __name__ == "__main__":
     main()
-

@@ -1,0 +1,11 @@
+{
+    "DATA_PATH":"/home/pluto/gitlocal/ClimateDiffuse/download_ERA5/data/",
+    "TRAIN_YEAR_START":2020,
+    "TRAIN_YEAR_END":2021,
+    "TEST_YEAR_START":2021,
+    "TEST_YEAR_END":2022,
+    "HIGH_RES_SHP":[32, 16],
+    "RUNS_PATH":"/home/pluto/gitlocal/ClimateDiffuse/src/runs/",
+    "RESULTS_PATH":"/home/pluto/gitlocal/ClimateDiffuse/src/results/",
+    "Model_PATH":"/home/pluto/gitlocal/ClimateDiffuse/src/Model/"
+}

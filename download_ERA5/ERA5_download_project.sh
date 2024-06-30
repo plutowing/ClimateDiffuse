@@ -9,7 +9,9 @@
 #
 # Experienced Wget Users: add additional command-line flags here
 #   Use the -r (--recursive) option with care
-dir="../data/"
+# dir="../data/"
+source ./ERA5_download.cfg
+dir=${DATA_PATH}
 opts="-N -c -P ${dir}"
 #
 cert_opt=""

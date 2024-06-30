@@ -1,16 +1,24 @@
 #!/bin/bash
 # We will download every few days so they aren't too correlated
 # over N years so that this turns out to be 1Tb?
-dir="../data/"
+# dir="../data/"
+source ./ERA5_download.cfg
+dir=${DATA_PATH}
 opts="-N -c -P ${dir}"
 
 n_days=1
 
-year_start=1953
-month_start=1
+# year_start=2022
+# month_start=01
 
-year_end=2022
-month_end=12
+# year_end=2022
+# month_end=12
+
+year_start=${YEAR_START}
+month_start=${MONTH_START}
+
+year_end=${YEAR_END}
+month_end=${MONTH_END}
 
 
 for year in $(seq ${year_start} 1 ${year_end}); do
@@ -31,9 +39,9 @@ for year in $(seq ${year_start} 1 ${year_end}); do
         python preprocessing_subsample.py --year ${year} --month ${month} --last_day ${last_day} --remove_files  
         echo "Done for ${year} ${month}"
     done
-    echo "Concatenate all months for ${year}"
-    python preprocessing_concat_year.py --year ${year} --remove_files
-    echo "Done for  ${year}"
+    # echo "Concatenate all months for ${year}"
+    # python preprocessing_concat_year.py --year ${year} --remove_files
+    # echo "Done for  ${year}"
 done
 echo DONE
 

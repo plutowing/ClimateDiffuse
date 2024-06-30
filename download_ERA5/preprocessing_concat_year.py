@@ -1,4 +1,5 @@
 import os 
+import configparser
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
@@ -11,7 +12,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--year', metavar='year', type=int)
 parser.add_argument('--remove_files', metavar='remove_files', action=argparse.BooleanOptionalAction)
 
-datadir = "../data/"
+# datadir = "../data/"
+cfg = configparser.ConfigParser()
+cfg.read("ERA5_download.ini")
+datadir = cfg["common"]["DATA_PATH"]
 
 ## Provide year and month as input to this file using args
 args = parser.parse_args()

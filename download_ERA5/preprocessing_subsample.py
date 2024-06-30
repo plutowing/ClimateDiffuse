@@ -1,11 +1,15 @@
-import os 
+import os
+import configparser
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
 import random
 import argparse
 
-datadir = "../data/"
+# datadir = "../data/"
+cfg = configparser.ConfigParser()
+cfg.read("ERA5_download.ini")
+datadir = cfg["common"]["DATA_PATH"]
 
 # Get arguments from argparser
 parser = argparse.ArgumentParser()
